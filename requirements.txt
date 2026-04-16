@@ -4,3 +4,4 @@ Pillow>=10.0.0
 numpy
 pycryptodome
 werkzeug
+nltk
