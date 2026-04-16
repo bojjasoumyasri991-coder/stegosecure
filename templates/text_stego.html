@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Text Steganography</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #eef2f7;
+            text-align: center;
+        }
+
+        h1 {
+            margin-top: 40px;
+            font-size: 42px;
+        }
+
+        .container {
+            width: 500px;
+            margin: 30px auto;
+        }
+
+        .box {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0px 5px 15px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        input, select {
+            width: 90%;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+        }
+
+        .expire-row {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .expire-row input {
+            width: 60%;
+        }
+
+        .expire-row select {
+            width: 30%;
+        }
+
+        button {
+            width: 95%;
+            padding: 10px;
+            background: #2d73ff;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background: #1c5de8;
+        }
+
+        .success {
+            color: green;
+            margin-top: 10px;
+        }
+
+        .error {
+            color: red;
+            margin-top: 10px;
+        }
+
+        .key-box {
+            background: #f1f5ff;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            word-break: break-all;
+        }
+
+        .download-link {
+            display: inline-block;
+            margin-top: 15px;
+            text-decoration: none;
+            color: #2d73ff;
+            font-weight: bold;
+        }
+
+        .download-link:hover {
+            text-decoration: underline;
+        }
+
+        .decoded-box {
+            background: #f1fff4;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            word-break: break-word;
+        }
+
+        a.back {
+            display: block;
+            margin-top: 20px;
+            text-decoration: none;
+            color: #2d73ff;
+        }
+
+        a.back:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Text Steganography</h1>
+
+<div class="container">
+
+    <!-- 🔐 ENCODE SECTION -->
+    <div class="box">
+        <h2>Encode Message</h2>
+
+        <form method="POST" enctype="multipart/form-data">
+            <input type="file" name="file" required>
+            <input type="text" name="message" placeholder="Enter secret message" required>
+
+            <!-- SINGLE Expiration Field -->
+            <div class="expire-row">
+                <input type="number"
+                       name="expiration_time"
+                       placeholder="Enter expiration time"
+                       min="1"
+                       required>
+
+                <select name="expiration_unit" required>
+                    <option value="seconds">Seconds</option>
+                    <option value="minutes" selected>Minutes</option>
+                    <option value="hours">Hours</option>
+                </select>
+            </div>
+            <select name="method" required>
+    <option value="zero">Zero-Width Steganography</option>
+    <option value="synonym">Synonym Steganography</option>
+    <option value="hybrid">Hybrid (Synonym + Zero-Width)</option>
+</select>
+
+            <button type="submit">Encode Message</button>
+        </form>
+
+        {% if success %}
+            <p class="success">{{ success }}</p>
+        {% endif %}
+
+        {% if secret_key %}
+            <div class="key-box">
+                <strong>🔑 Secret Key (Save This!):</strong><br><br>
+                {{ secret_key }}
+            </div>
+        {% endif %}
+
+        {% if output_file %}
+            <a class="download-link" href="/download/{{ output_file }}">
+                ⬇ Download Encoded File
+            </a>
+        {% endif %}
+    </div>
+
+
+<!-- 🔓 DECODE SECTION -->
+<div class="box">
+    <h2>Decode Message</h2>
+
+    <form method="POST" action="/decode_text" enctype="multipart/form-data">
+        <input type="file" name="file" required>
+        <input type="text" name="password" placeholder="Enter Secret Key" required>
+        <button type="submit">Decode Message</button>
+    </form>
+
+    <!-- ✅ ONLY ONE OUTPUT BLOCK -->
+    {% if decoded_message %}
+        <div class="decoded-box">
+            <strong>🔓 Decoded Message:</strong><br><br>
+            {{ decoded_message }}
+        </div>
+    {% endif %}
+</div>
+{% if error %}
+    <p class="error">{{ error }}</p>
+{% endif %}
+
+</div>
+
+<a href="/" class="back">← Back to Home</a>
+
+</body>
+</html>

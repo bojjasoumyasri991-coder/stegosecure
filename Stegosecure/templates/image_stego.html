@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Image Steganography</title>
+    <style>
+        body { font-family: Arial; background:#eef2f7; text-align:center; }
+        .box { width:500px; margin:30px auto; background:white;
+               padding:30px; border-radius:15px;
+               box-shadow:0 5px 15px rgba(0,0,0,0.1); }
+
+        input { width:90%; padding:10px; margin:10px 0; border-radius:8px; }
+        button { width:95%; padding:10px; background:#2d73ff;
+                 color:white; border:none; border-radius:8px; }
+
+        .key-box, .decoded-box { margin-top:15px; padding:15px;
+                                 background:#f1f5ff; border-radius:8px; }
+
+        .error { color:red; margin-top:10px; }
+        .success { color:green; margin-top:10px; }
+    </style>
+</head>
+<body>
+
+<h1>Image Steganography</h1>
+
+<div class="box">
+    <h2>Encode Message</h2>
+    <form method="POST" enctype="multipart/form-data">
+        <input type="file" name="file" required>
+        <input type="text" name="message" placeholder="Enter secret message" required>
+        <button type="submit">Encode Image</button>
+    </form>
+
+    {% if success %}<p class="success">{{ success }}</p>{% endif %}
+
+    {% if secret_key %}
+    <div class="key-box">
+        <strong>🔑 Secret Key:</strong><br><br>{{ secret_key }}
+    </div>
+    {% endif %}
+
+    {% if output_file %}
+    <a href="/download/{{ output_file }}">⬇ Download Encoded Image</a>
+    {% endif %}
+</div>
+
+<div class="box">
+    <h2>Decode Message</h2>
+    <form method="POST" action="/decode_image" enctype="multipart/form-data">
+        <input type="file" name="file" required>
+        <input type="text" name="password" placeholder="Enter Secret Key" required>
+        <button type="submit">Decode Image</button>
+    </form>
+
+    {% if decoded_message %}
+    <div class="decoded-box">
+        <strong>🔓 Decoded Message:</strong><br><br>{{ decoded_message }}
+    </div>
+    {% endif %}
+</div>
+
+{% if error %}<p class="error">{{ error }}</p>{% endif %}
+
+<a href="/">← Back to Home</a>
+
+</body>
+</html>
